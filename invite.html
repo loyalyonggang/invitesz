@@ -487,11 +487,6 @@
             <input type="text" class="input-field" id="memberName" placeholder="请输入会员名称，如：张三" maxlength="10">
         </div>
 
-        <div class="input-group">
-            <label class="input-label">二维码链接（可选）</label>
-            <input type="text" class="input-field" id="qrUrl" placeholder="活动详情页链接">
-        </div>
-
         <button class="btn-generate" onclick="generateInvite()">生成邀请函</button>
         <button class="btn-download" id="btnDownload" onclick="downloadImage()" disabled>下载图片</button>
 
@@ -554,7 +549,7 @@
                         <div class="qr-box">
                             <div class="qr-code">
                                 <img id="qrImage"
-                                    src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://localhost:3009"
+                                    src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://sz.095016.xyz/"
                                     alt="二维码">
                             </div>
                             <div class="qr-text">扫码查看详情</div>
@@ -591,8 +586,8 @@
             document.getElementById('displayName').textContent = name;
             document.getElementById('btnDownload').disabled = false;
 
-            // 更新二维码
-            const qrUrl = document.getElementById('qrUrl').value.trim() || 'https://localhost:3009';
+            // 更新二维码 (固定链接)
+            const qrUrl = 'https://sz.095016.xyz/';
             document.getElementById('qrImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrUrl)}`;
         }
 
