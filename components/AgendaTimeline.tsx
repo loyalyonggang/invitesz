@@ -11,12 +11,10 @@ export const AgendaTimeline: React.FC<AgendaTimelineProps> = ({ items }) => {
     <div className="mt-8 px-1">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-bold text-slate-900 flex items-center">
-          <span className="w-1 h-5 bg-silk-blue rounded-full mr-3 hidden"></span>
           流程安排
         </h3>
-        <span className="px-3 py-1 bg-slate-100 text-slate-400 text-xs rounded-full font-medium">Agenda</span>
       </div>
-      
+
       <div className="relative pl-3 space-y-8">
         {/* Vertical Dashed Line */}
         <div className="absolute left-[26px] top-4 bottom-4 w-[1px] border-l border-dashed border-slate-300"></div>

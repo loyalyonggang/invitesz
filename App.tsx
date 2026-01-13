@@ -169,7 +169,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Sticky Bottom Action Bar */}
-      <div className="absolute bottom-0 left-0 w-full px-6 py-4 bg-white border-t border-slate-100 z-50 flex space-x-4 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto px-6 py-4 bg-white border-t border-slate-100 z-50 flex space-x-4 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
         <button
           onClick={() => setShowCalendarModal(true)}
           className="flex-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3.5 rounded-xl shadow-sm flex items-center justify-center space-x-2 transition-all active:scale-[0.98]"

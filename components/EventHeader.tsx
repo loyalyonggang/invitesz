@@ -18,7 +18,7 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ title, subtitle, date,
     // Initialize audio
     audioRef.current = new Audio(musicUrl);
     audioRef.current.loop = true;
-    
+
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -44,21 +44,21 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ title, subtitle, date,
 
   return (
     <div className="relative bg-gradient-to-b from-[#3b52a3] to-silk-blue text-white pb-36 pt-12 px-6 overflow-hidden">
-      
+
       {/* Music Toggle - Top Right */}
-      <button 
+      <button
         onClick={togglePlay}
         className={`absolute top-6 right-6 p-2.5 rounded-full backdrop-blur-md transition-all border z-20 flex items-center justify-center
-          ${isPlaying 
-            ? 'bg-silk-gold/20 border-silk-gold text-silk-gold shadow-[0_0_15px_rgba(200,160,100,0.3)]' 
+          ${isPlaying
+            ? 'bg-silk-gold/20 border-silk-gold text-silk-gold shadow-[0_0_15px_rgba(200,160,100,0.3)]'
             : 'bg-white/10 border-white/10 text-white hover:bg-white/20'
           }`}
         aria-label={isPlaying ? "Pause music" : "Play music"}
       >
         {isPlaying ? (
           <div className="relative">
-             <Volume2 className="w-4 h-4 animate-pulse" />
-             <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-ping opacity-75"></span>
+            <Volume2 className="w-4 h-4 animate-pulse" />
+            <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-ping opacity-75"></span>
           </div>
         ) : (
           <Music className="w-4 h-4" />
@@ -67,7 +67,7 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ title, subtitle, date,
 
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center text-center">
-        
+
         {/* Gold Badge Pill */}
         <div className="inline-block px-4 py-1.5 border border-silk-gold rounded-full bg-silk-gold/10 backdrop-blur-sm mb-6">
           <span className="text-[10px] tracking-[0.2em] text-silk-gold font-bold uppercase">Silk Road Member Event</span>
@@ -75,12 +75,17 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ title, subtitle, date,
 
         {/* Title */}
         <div className="space-y-4 mb-8">
-          <h1 className="text-5xl font-serif font-bold tracking-wide text-white drop-shadow-lg">
-            {title}
-          </h1>
+          <div className="space-y-2">
+            <h1 className="text-5xl font-serif font-bold tracking-wide text-white drop-shadow-lg">
+              {title}
+            </h1>
+            <p className="text-[10px] tracking-[0.4em] text-silk-gold/80 font-medium uppercase">
+              Silk Road · Elegant Gathering
+            </p>
+          </div>
           {/* Gold Underline */}
-          <div className="w-12 h-1 bg-silk-gold mx-auto rounded-full"></div>
-          
+          <div className="w-12 h-1 bg-silk-gold mx-auto rounded-full mt-4"></div>
+
           <div className="pt-2">
             <p className="text-blue-100 font-light tracking-widest text-sm">
               <span className="opacity-80">丝绸之路·AI出海会员线下私享会</span>
@@ -113,6 +118,6 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ title, subtitle, date,
         </div>
 
       </div>
-    </div>
+    </div >
   );
 };
