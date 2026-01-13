@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>丝绸之路 · 邀请函生成器</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Serif SC', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* 生成器控制面板 */
+        .generator-panel {
+            max-width: 420px;
+            margin: 0 auto 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .panel-title {
+            color: #c8a064;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-label {
+            display: block;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(200, 160, 100, 0.3);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: #c8a064;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #c8a064 0%, #a67c3d 100%);
+            border: none;
+            border-radius: 10px;
+            color: #0f172a;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(200, 160, 100, 0.3);
+        }
+
+        .btn-download {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            border: 1px solid rgba(200, 160, 100, 0.5);
+            border-radius: 10px;
+            color: #c8a064;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+            margin-top: 12px;
+        }
+
+        .btn-download:hover {
+            background: rgba(200, 160, 100, 0.1);
+        }
+
+        .btn-download:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .tip {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+            margin-top: 16px;
+        }
+
+        /* 预览区域 */
+        .preview-container {
+            display: flex;
+            justify-content: center;
+            padding-bottom: 40px;
+        }
+
+        /* 邀请函卡片 - iPhone 14 尺寸 */
+        .invite-card {
+            width: 390px;
+            height: 844px;
+            background: linear-gradient(180deg, #0a1628 0%, #12264a 40%, #0a1628 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+        }
+
+        /* 装饰边框 */
+        .border-frame {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            right: 16px;
+            bottom: 16px;
+            border: 1px solid rgba(200, 160, 100, 0.25);
+            pointer-events: none;
+        }
+
+        /* 四角装饰 */
+        .corner-deco {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+        }
+
+        .corner-deco::before,
+        .corner-deco::after {
+            content: '';
+            position: absolute;
+            background: #c8a064;
+        }
+
+        .corner-deco.tl {
+            top: 12px;
+            left: 12px;
+        }
+
+        .corner-deco.tl::before {
+            width: 20px;
+            height: 1px;
+            top: 0;
+            left: 0;
+        }
+
+        .corner-deco.tl::after {
+            width: 1px;
+            height: 20px;
+            top: 0;
+            left: 0;
+        }
+
+        .corner-deco.tr {
+            top: 12px;
+            right: 12px;
+        }
+
+        .corner-deco.tr::before {
+            width: 20px;
+            height: 1px;
+            top: 0;
+            right: 0;
+        }
+
+        .corner-deco.tr::after {
+            width: 1px;
+            height: 20px;
+            top: 0;
+            right: 0;
+        }
+
+        .corner-deco.bl {
+            bottom: 12px;
+            left: 12px;
+        }
+
+        .corner-deco.bl::before {
+            width: 20px;
+            height: 1px;
+            bottom: 0;
+            left: 0;
+        }
+
+        .corner-deco.bl::after {
+            width: 1px;
+            height: 20px;
+            bottom: 0;
+            left: 0;
+        }
+
+        .corner-deco.br {
+            bottom: 12px;
+            right: 12px;
+        }
+
+        .corner-deco.br::before {
+            width: 20px;
+            height: 1px;
+            bottom: 0;
+            right: 0;
+        }
+
+        .corner-deco.br::after {
+            width: 1px;
+            height: 20px;
+            bottom: 0;
+            right: 0;
+        }
+
+        /* 内容区 */
+        .content {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 28px 30px;
+        }
+
+        /* 顶部标识 */
+        .top-badge {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .badge-text {
+            display: inline-block;
+            padding: 6px 18px;
+            border: 1px solid rgba(200, 160, 100, 0.4);
+            color: #c8a064;
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* 主标题 */
+        .main-title {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .title-text {
+            font-size: 42px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 6px;
+            text-shadow: 0 2px 20px rgba(200, 160, 100, 0.2);
+        }
+
+        .title-line {
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #c8a064, transparent);
+            margin: 16px auto 0;
+        }
+
+        /* 副标题 */
+        .subtitle {
+            text-align: center;
+            font-size: 12px;
+            color: rgba(200, 160, 100, 0.85);
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+
+        /* 日期时间 */
+        .datetime {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .date-main {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .date-sub {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 1px;
+        }
+
+        /* 分隔线 */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(200, 160, 100, 0.3), transparent);
+            margin: 0 0 20px;
+        }
+
+        /* 邀请区域 */
+        .invite-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .invite-header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .invite-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 2px;
+        }
+
+        .member-name {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #c8a064;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 15px rgba(200, 160, 100, 0.25);
+        }
+
+        .invite-content {
+            flex: 1;
+            background: rgba(200, 160, 100, 0.04);
+            border: 1px solid rgba(200, 160, 100, 0.12);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .invite-text {
+            font-size: 12px;
+            line-height: 1.9;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: justify;
+            text-indent: 2em;
+            margin-bottom: 8px;
+        }
+
+        .invite-text:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 底部信息 */
+        .bottom-info {
+            display: flex;
+            gap: 12px;
+        }
+
+        .venue-box {
+            flex: 1;
+            background: rgba(200, 160, 100, 0.06);
+            border: 1px solid rgba(200, 160, 100, 0.15);
+            padding: 12px;
+        }
+
+        .venue-label {
+            font-size: 9px;
+            color: #c8a064;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+
+        .venue-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .venue-address {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .qr-box {
+            width: 90px;
+            background: rgba(200, 160, 100, 0.06);
+            border: 1px solid rgba(200, 160, 100, 0.15);
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-code {
+            width: 60px;
+            height: 60px;
+            background: #fff;
+            padding: 3px;
+            margin-bottom: 4px;
+        }
+
+        .qr-code img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .qr-text {
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+        }
+
+        /* 底部 Logo */
+        .footer {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .footer-text {
+            font-size: 10px;
+            color: rgba(200, 160, 100, 0.5);
+            letter-spacing: 3px;
+        }
+
+        /* 加载状态 */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading.show {
+            display: flex;
+        }
+
+        .loading-text {
+            color: #c8a064;
+            font-size: 16px;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 生成器控制面板 -->
+    <div class="generator-panel">
+        <div class="panel-title">邀请函生成器</div>
+
+        <div class="input-group">
+            <label class="input-label">会员名称</label>
+            <input type="text" class="input-field" id="memberName" placeholder="请输入会员名称，如：张三" maxlength="10">
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">二维码链接（可选）</label>
+            <input type="text" class="input-field" id="qrUrl" placeholder="活动详情页链接">
+        </div>
+
+        <button class="btn-generate" onclick="generateInvite()">生成邀请函</button>
+        <button class="btn-download" id="btnDownload" onclick="downloadImage()" disabled>下载图片</button>
+
+        <div class="tip">输入会员名称后点击生成，支持下载为 PNG 图片</div>
+    </div>
+
+    <!-- 邀请函预览 -->
+    <div class="preview-container">
+        <div class="invite-card" id="inviteCard">
+            <div class="border-frame"></div>
+            <div class="corner-deco tl"></div>
+            <div class="corner-deco tr"></div>
+            <div class="corner-deco bl"></div>
+            <div class="corner-deco br"></div>
+
+            <div class="content">
+                <div class="top-badge">
+                    <span class="badge-text">Silk Road · VIP Invitation</span>
+                </div>
+
+                <div class="main-title">
+                    <div class="title-text">丝路·雅集</div>
+                    <div class="title-line"></div>
+                </div>
+
+                <div class="subtitle">丝绸之路 · AI出海会员线下私享会</div>
+
+                <div class="datetime">
+                    <div class="date-main">2026 年 1 月 16 日</div>
+                    <div class="date-sub">周五 · 17:00 签到</div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="invite-section">
+                    <div class="invite-header">
+                        <span class="invite-label">诚 挚 邀 请</span>
+                    </div>
+
+                    <div class="member-name" id="displayName">尊敬的贵宾</div>
+
+                    <div class="invite-content">
+                        <p class="invite-text">
+                            姑苏城外，运河之畔。时维金秋，群贤毕至。诚邀您共赴一场味蕾与思想的盛宴。
+                        </p>
+                        <p class="invite-text">
+                            本次雅集设宴于苏州美食界"顶流"——阿红私房菜。这家43年匠心传承的老字号，连续霸榜苏州江浙菜销量榜首及苏帮菜热门榜第一等二十余项殊荣，曾引得王晶、罗嘉良、朱孝天等名流皆成座上宾。
+                        </p>
+                        <p class="invite-text">
+                            让我们在品味地道苏帮美味的同时，从技术落地到全球增长，与江浙沪区域的AI先行者们深度链接，共话出海新篇章。
+                        </p>
+                    </div>
+
+                    <div class="bottom-info">
+                        <div class="venue-box">
+                            <div class="venue-label">活动地点</div>
+                            <div class="venue-name">阿红私房菜 (新都汇店)</div>
+                            <div class="venue-address">苏州市吴江区 · 新都汇城市广场9幢<br>尊享包间 V209</div>
+                        </div>
+                        <div class="qr-box">
+                            <div class="qr-code">
+                                <img id="qrImage"
+                                    src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://localhost:3009"
+                                    alt="二维码">
+                            </div>
+                            <div class="qr-text">扫码查看详情</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    <div class="footer-text">丝 绸 之 路 · A I 出 海</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载状态 -->
+    <div class="loading" id="loading">
+        <div class="loading-text">正在生成图片...</div>
+    </div>
+
+    <script>
+        let currentMemberName = '';
+
+        function generateInvite() {
+            const nameInput = document.getElementById('memberName');
+            const name = nameInput.value.trim();
+
+            if (!name) {
+                alert('请输入会员名称');
+                nameInput.focus();
+                return;
+            }
+
+            currentMemberName = name;
+            document.getElementById('displayName').textContent = name;
+            document.getElementById('btnDownload').disabled = false;
+
+            // 更新二维码
+            const qrUrl = document.getElementById('qrUrl').value.trim() || 'https://localhost:3009';
+            document.getElementById('qrImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrUrl)}`;
+        }
+
+        async function downloadImage() {
+            if (!currentMemberName) {
+                alert('请先生成邀请函');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            loading.classList.add('show');
+
+            try {
+                const card = document.getElementById('inviteCard');
+
+                const canvas = await html2canvas(card, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: null,
+                    logging: false,
+                    width: 390,
+                    height: 844
+                });
+
+                const link = document.createElement('a');
+                link.download = `丝绸之路邀请函_${currentMemberName}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+            } catch (error) {
+                console.error('生成图片失败:', error);
+                alert('生成图片失败，请重试');
+            } finally {
+                loading.classList.remove('show');
+            }
+        }
+
+        document.getElementById('memberName').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                generateInvite();
+            }
+        });
+    </script>
+</body>
+
+</html>
